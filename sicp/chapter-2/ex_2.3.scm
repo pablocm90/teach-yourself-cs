@@ -1,3 +1,5 @@
+; POINT
+
 ;point constructor:
 
 (define (make-point x y) (cons x y))
@@ -6,6 +8,8 @@
 
 (define (x-point p) (car p))
 (define (y-point p) (cdr p))
+
+; SEGMENT
 
 ;segment constructor :
 
@@ -17,32 +21,30 @@
 (define (start-segment segment) (car segment))
 (define (end-segment segment) (cdr segment))
 
+(define (length segment)
+  (abs (- (start-segment segment) (end-segment segment)))
+
+; RECTANGLE
+
+; rectangle constructor
+
+(define (make-rectangle s1 s2) (cons s1 s2))
+
+; rectangle selectors
+
+(define (vertical-side rectangle) (car rectangle))
+(define (horizontal-side rectangle) (cdr rectangle))
 
 
-
-(define (midpoint-segment segment)
-  (make-point (/ (+ (x-point (start-segment segment)) (x-point (end-segment segment))) 2)
-    (/ (+ (y-point (start-segment segment)) (y-point (end-segment segment))) 2)))
+;Procedures
 
 
-(define one (make-point 0 1))
-(define two (make-point 6 7))
+(define (area rectangle)
+  (* (length (vertical-side rectangle)) (length (horizontal-side rectangle))))
 
-(define seg-one (make-segment one two))
+(define (perimeter rectangle)
+  (+ (* (length (vertical-side rectangle)) 2) (* (length (horizontal-side rectangle)) 2)))
 
+  ;https://codology.net/post/sicp-solution-exercise-2-3/
 
-
-
-
-(define (print-point p)
-  (newline)
-  (display "(")
-  (display (x-point p))
-  (display ",")
-  (display (y-point p))
-  (display ")"))
-
-
-(print-point (midpoint-segment seg-one))
-
-
+;( Not even close! :( ))
