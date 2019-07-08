@@ -1,4 +1,4 @@
-; constructor
+
 
 (define (make-interval a b) (cons a b))
 
@@ -53,3 +53,7 @@
                      (/ 1.0 (lower-bound y))))))
 
 
+; new mult
+
+(define (new-mult x y)
+  )
