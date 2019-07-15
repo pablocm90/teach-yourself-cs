@@ -160,3 +160,4 @@
  (test old-mul-interval new-mul-interval)
 
  ;http://community.schemewiki.org/?sicp-ex-2.11
+t
