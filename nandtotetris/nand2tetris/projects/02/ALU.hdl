@@ -7,7 +7,7 @@
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
- * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs,
  * according to 6 input bits denoted zx,nx,zy,ny,f,no.
  * In addition, the ALU computes two 1-bit outputs:
  * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
@@ -27,8 +27,8 @@
 // if (out < 0) set ng = 1
 
 CHIP ALU {
-    IN  
-        x[16], y[16],  // 16-bit inputs        
+    IN
+        x[16], y[16],  // 16-bit inputs
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -36,11 +36,47 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
+    OUT
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
+    // Zero the x input
+    Mux16(a=x, b=false, sel=zx, out=zxout);
+    // Negate the x input
+    Not16(in=zxout, out=nxout);
+    // compute if nx or zx
+    Mux16(a=zxout, b=nxout, sel=nx, out=xcomp);
+
+    // Zero the y input
+    Mux16(a=y, b=false, sel=zy, out=zyout);
+    // Negate the y input
+    Not16(in=zyout, out=nyout);
+    // compute if ny or zy
+    Mux16(a=zyout, b=nyout, sel=ny, out=ycomp);
+
+    // x + y
+    Add16(a=xcomp, b=ycomp, out=fsumout);
+    // x and y
+    And16(a=xcomp, b=ycomp, out=fandout);
+    // computing f
+    Mux16(a=fandout, b=fsumout, sel=f, out=fcomp);
+
+    // Negating the output
+    Not16(in=fcomp, out=nfcomp);
+    Mux16(a=fcomp, b=nfcomp, sel=no, out=out, out[15]=lastout, out[0..7]=fhout, out[8..15]=lhout);
+    // compute if nfcomp or fcomp
+
+    // check if out == 0
+    // Or 8 way for each half
+    Or8Way(in=fhout, out=fhalf);
+    Or8Way(in=lhout, out=shalf);
+    // and the or both again
+    Or(a=fhalf, b=shalf, out=or);
+    Not(in=or, out=zr);
+    // check if out < 0
+    And(a=lastout, b=true, out=ng);
+
    // Put you code here:
 }
