@@ -35,8 +35,30 @@ class SongList
 
   MaxTime = 5*60
 
+  def initialize
+    @songs = Array.new
+  end
+
+  def append(song)
+    @songs << song
+  end
+
+  def delete_first
+    @songs.shift
+  end
+
+  def delete_first
+    @songs.pop
+  end
+
   def SongList.isTooLong(aSong)
     return aSong.duration > MaxTime
+  end
+
+  def [](key)
+
+    return @songs[key] if key.kind_of? Integer
+    return @songs.find {|song| song.name == key}
   end
 
 end
