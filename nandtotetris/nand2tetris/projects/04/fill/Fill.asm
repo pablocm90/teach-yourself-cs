@@ -15,10 +15,8 @@
 
 
 
-
 (CHECK)
   @24576
-  M=A
   D=M // Check if key is pressed
   @BLACK // yes ? -> Go to Black Loop
   D;JNE
@@ -26,27 +24,32 @@
   D;JEQ // no ? -> Go to White Loop
 
 (BLACK)
-@SCREEN
-D=M
-@CHECK
-D;JLT
+  @SCREEN
+  D=M
+  @CHECK
+  D;JLT
+
 
 @8192
-M = A
-D = M
-@SCREEN
-D = A + D
-A = D
+D = A
+@counter
+M = D
 
 (BLACKLOOP)
-D = D - 1
-A = D
-M = -1
+  @counter
+  D = M
+  @SCREEN
+  A = A + D
+  M = -1
+  @counter
+  M = M - 1
+  D = M
+  @BLACKLOOP
+  D;JGE
+  @CHECK
+  D;JLT
 
-@BLACKLOOP
-D;JGT
-@CHECK
-D;JEQ
+
 
 
 (WHITE)
@@ -54,21 +57,22 @@ D;JEQ
 D=M
 @CHECK
 D;JEQ
+
 @8192
-M = A
-D = M
-@SCREEN
-D = A + D
-A = D
+D = A
+@counter
+M = D
+
 (WHITELOOP)
-D = D - 1
-A = D
-M = 0
-
-
-@WHITELOOP
-D;JGT
-@CHECK
-D;JEQ
-// Iterate on each row
-// Whiten the row
+  @counter
+  D = M
+  @SCREEN
+  A = A + D
+  M = 0
+  @counter
+  M = M - 1
+  D = M
+  @WHITELOOP
+  D;JGE
+  @CHECK
+  D;JLT
