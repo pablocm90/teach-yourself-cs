@@ -9,12 +9,10 @@ def get_duration(string)
 end
 
 File.open('song_list.txt').each do |line|
-  p line
-  song_parts = line.split('|')
-  duration = get_duration song_parts[1]
-  artist = song_parts[2].strip
-  name = song_parts[3]
-  songs.append(Song.new(name, artist, duration))
+  file, length, name, title = line.chomp.split(/\s*\|\s*/)
+  name.squeeze!(" ")
+  mins, secs = length.scan(/\d+/)
+  songs.append Song.new(title, name, mins.to_i*60+secs.to_i)
 end
 
 p songs
